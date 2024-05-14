@@ -4,7 +4,6 @@ import logging
 
 from llama_index.core import (
     VectorStoreIndex,
-    ServiceContext,
     StorageContext,
     Settings,
 )
@@ -30,14 +29,12 @@ logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 from qdrant_client import QdrantClient
 # Qdrant local
 client = QdrantClient(
-    location=":memory:"
+    #location=":memory:"
     # Async upsertion does not work
     # on 'memory' location and requires
     # Qdrant to be deployed somewhere.
-    #url="http://localhost:6334",
-    #prefer_grpc=True,
-    # set API KEY for Qdrant Cloud
-    #api_key=os.get(QDRANT_API_KEY"),
+    url="http://localhost:6334",
+    prefer_grpc=True,
 )
 
 # TODO: You will need to set a Github token
@@ -74,10 +71,6 @@ Settings.embed_model = ollama_embedding
 #Settings.num_output = 512
 #Settings.context_window = 3900
 
-#service_context = ServiceContext.from_defaults(
-#    embed_model=ollama_embedding,
-#)
-
 vector_store = QdrantVectorStore(    
     client=client, collection_name="llamacpp", 
 )
@@ -90,8 +83,4 @@ index = VectorStoreIndex.from_documents(
     #use_async=True,
     show_progress=True,
 )
-
-
-index.storage_context.persist(persist_dir="storage")
-
 # FIXME add refresh example
